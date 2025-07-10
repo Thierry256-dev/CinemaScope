@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import "../index.css";
 
 // You should place a video file in public/ or use a royalty-free video URL
-const VIDEO_SRC = "/background-cinema.mp4"; // Place your video in public/background-cinema.mp4
+const VIDEO_SRC = "/background-cinema.mp4"; // This file exists in public/
 
 const heroVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -34,7 +34,7 @@ const LandingPage = () => {
         playsInline
       />
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-70 z-10" />
+      <div className="absolute bg-black/80 inset-0 z-10" />
       {/* Hero Content */}
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
         <motion.h1
@@ -68,6 +68,10 @@ const LandingPage = () => {
         >
           Explore Movies
         </motion.button>
+      </div>
+      {/* Footer - Developer credit */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 text-xs text-gray-300 font-poppins opacity-80 select-none pointer-events-none">
+        Developed by Thierry
       </div>
     </div>
   );
