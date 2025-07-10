@@ -50,26 +50,37 @@ const Home = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">Now Showing</h1>
-      <form onSubmit={handleSearchSubmit} className="mb-6 flex gap-2">
+      <h1 className="text-3xl md:text-5xl font-extrabold mb-6 text-gray-900 dark:text-white font-outfit tracking-tight text-center">
+        Now Showing
+      </h1>
+      <form
+        onSubmit={handleSearchSubmit}
+        className="mb-8 flex flex-col sm:flex-row gap-3 items-center justify-center"
+      >
         <input
           type="text"
           value={search}
           onChange={handleSearchChange}
           placeholder="Search for a movie..."
-          className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 w-full sm:w-auto border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-base md:text-lg font-poppins focus:outline-none focus:ring-2 focus:ring-accent-orange bg-white/80 dark:bg-gray-900/60 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-sm"
         />
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+          className="rounded-full px-6 py-2 md:px-8 md:py-3 font-semibold text-lg font-outfit bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-orange focus:ring-offset-2"
         >
           Search
         </button>
       </form>
-      {loading && <p className="text-gray-600">Loading movies...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {loading && (
+        <p className="text-lg text-gray-600 dark:text-gray-300 font-poppins text-center">
+          Loading movies...
+        </p>
+      )}
+      {error && (
+        <p className="text-lg text-red-500 font-poppins text-center">{error}</p>
+      )}
       <AnimatePresence mode="wait">
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {movies.map((movie, idx) => (
             <MovieCard
               key={movie.id}

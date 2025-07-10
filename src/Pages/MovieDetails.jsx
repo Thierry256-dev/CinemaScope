@@ -64,19 +64,33 @@ const MovieDetails = () => {
   }
 
   if (loading)
-    return <div className="p-8 text-gray-600">Loading movie details...</div>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
-  if (!movie) return <div className="p-8 text-gray-600">Movie not found.</div>;
+    return (
+      <div className="p-8 text-lg text-gray-600 dark:text-gray-300 font-poppins text-center">
+        Loading movie details...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="p-8 text-lg text-red-500 font-poppins text-center">
+        {error}
+      </div>
+    );
+  if (!movie)
+    return (
+      <div className="p-8 text-lg text-gray-600 dark:text-gray-300 font-poppins text-center">
+        Movie not found.
+      </div>
+    );
 
   return (
     <motion.div
-      className="max-w-3xl mx-auto px-4 py-8 bg-white/80 dark:bg-gray-900/80 rounded-lg shadow-md mt-6"
+      className="max-w-3xl mx-auto px-4 py-10 bg-white/80 dark:bg-gray-900/80 rounded-xl shadow-lg mt-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-8">
         <motion.img
           src={getPoster(movie.poster_path)}
           alt={movie.title}
@@ -95,16 +109,18 @@ const MovieDetails = () => {
           initial="hidden"
           animate="visible"
         >
-          <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-2 text-gray-900 dark:text-white font-outfit tracking-tight">
             {movie.title}
           </h1>
-          <div className="flex items-center text-gray-500 mb-2">
+          <div className="flex items-center text-gray-500 dark:text-gray-300 mb-2 font-poppins">
             <span className="mr-2">{movie.release_date?.split("-")[0]}</span>
             <StarRating value={movie.vote_average / 2} readOnly />
           </div>
           <div className="mt-4">
-            <h2 className="text-lg font-semibold mb-1">Overview</h2>
-            <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
+            <h2 className="text-lg md:text-xl font-semibold mb-1 font-outfit text-amber-400">
+              Overview
+            </h2>
+            <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line font-poppins">
               {movie.overview}
             </p>
           </div>
