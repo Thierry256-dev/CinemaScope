@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 const navLinks = [
   { name: "Home", to: "/" },
@@ -7,7 +8,7 @@ const navLinks = [
   { name: "Add Review", to: "/add-review" },
 ];
 
-const NavBar = () => {
+const NavBar = ({ darkMode, toggleDarkMode }) => {
   return (
     <nav className="bg-gray-900 text-white w-full shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,13 +34,22 @@ const NavBar = () => {
               </NavLink>
             ))}
           </div>
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            {/* You can add a hamburger menu here for mobile if needed */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {darkMode ? (
+                <FaSun className="text-amber-300 w-5 h-5" />
+              ) : (
+                <FaMoon className="text-blue-300 w-5 h-5" />
+              )}
+            </button>
+            {/* Mobile menu button can go here */}
           </div>
         </div>
         {/* Mobile menu (hidden by default) */}
-        {/* For a full mobile menu, add state and toggle logic here */}
       </div>
     </nav>
   );

@@ -14,21 +14,7 @@ function Layout({ children, darkMode, toggleDarkMode }) {
       }
     >
       <div className="transition-colors duration-500">
-        <NavBar />
-        <div className="flex justify-end p-4">
-          <button
-            onClick={toggleDarkMode}
-            className="px-4 py-2 rounded font-semibold shadow text-white"
-            style={{
-              background: darkMode
-                ? "linear-gradient(90deg, #ff7849, #ffbf00, #ff4b5c)"
-                : "linear-gradient(90deg, #ffbf00, #ff7849, #ff4b5c)",
-            }}
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? "Light Mode" : "Dark Mode"}
-          </button>
-        </div>
+        <NavBar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         {children}
       </div>
     </div>
@@ -52,11 +38,24 @@ function AnimatedRoutes() {
   );
 }
 
+function getInitialTheme() {
+  if (typeof window !== "undefined" && window.localStorage) {
+    const stored = window.localStorage.getItem("theme");
+    if (stored) return stored === "dark";
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    return mql.matches;
+  }
+  return true;
+}
+
 function App() {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(getInitialTheme);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
+    if (typeof window !== "undefined" && window.localStorage) {
+      window.localStorage.setItem("theme", darkMode ? "dark" : "light");
+    }
   }, [darkMode]);
 
   const toggleDarkMode = () => setDarkMode((d) => !d);
