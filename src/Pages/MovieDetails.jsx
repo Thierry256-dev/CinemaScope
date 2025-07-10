@@ -1,11 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import StarRating from "../Components/StarRating";
 import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
 
 const API_URL = "https://api.themoviedb.org/3"; // TMDB API base URL
+
+const posterVariants = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, type: "spring" } },
+};
+const infoVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, type: "spring", delay: 0.2 },
+  },
+};
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -55,9 +69,15 @@ const MovieDetails = () => {
   if (!movie) return <div className="p-8 text-gray-600">Movie not found.</div>;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 bg-white rounded-lg shadow-md mt-6">
+    <motion.div
+      className="max-w-3xl mx-auto px-4 py-8 bg-white/80 dark:bg-gray-900/80 rounded-lg shadow-md mt-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex flex-col md:flex-row gap-6">
-        <img
+        <motion.img
           src={getPoster(movie.poster_path)}
           alt={movie.title}
           className="w-full md:w-64 h-80 object-cover rounded-lg shadow"
@@ -65,9 +85,17 @@ const MovieDetails = () => {
             e.target.onerror = null;
             e.target.src = PLACEHOLDER_POSTERS[0];
           }}
+          variants={posterVariants}
+          initial="hidden"
+          animate="visible"
         />
-        <div className="flex-1 flex flex-col">
-          <h1 className="text-3xl font-bold mb-2 text-gray-900">
+        <motion.div
+          className="flex-1 flex flex-col"
+          variants={infoVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
             {movie.title}
           </h1>
           <div className="flex items-center text-gray-500 mb-2">
@@ -76,13 +104,13 @@ const MovieDetails = () => {
           </div>
           <div className="mt-4">
             <h2 className="text-lg font-semibold mb-1">Overview</h2>
-            <p className="text-gray-800 whitespace-pre-line">
+            <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
               {movie.overview}
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

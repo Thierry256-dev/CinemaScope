@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MovieCard from "../Components/MovieCard";
 import { fetchMovies, fetchPopularMovies } from "../services/api";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -67,23 +68,26 @@ const Home = () => {
       </form>
       {loading && <p className="text-gray-600">Loading movies...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {movies.map((movie) => (
-          <MovieCard
-            key={movie.id}
-            poster={
-              movie.poster_path
-                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                : undefined
-            }
-            title={movie.title}
-            year={movie.release_date ? movie.release_date.split("-")[0] : ""}
-            rating={movie.vote_average}
-            review={movie.overview}
-            readMoreLink={`/movies/${movie.id}`}
-          />
-        ))}
-      </div>
+      <AnimatePresence mode="wait">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {movies.map((movie, idx) => (
+            <MovieCard
+              key={movie.id}
+              poster={
+                movie.poster_path
+                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                  : undefined
+              }
+              title={movie.title}
+              year={movie.release_date ? movie.release_date.split("-")[0] : ""}
+              rating={movie.vote_average}
+              review={movie.overview}
+              readMoreLink={`/movies/${movie.id}`}
+              index={idx}
+            />
+          ))}
+        </div>
+      </AnimatePresence>
     </div>
   );
 };

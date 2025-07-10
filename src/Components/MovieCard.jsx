@@ -1,30 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
 
-/**
- * MovieCard component displays a movie poster, title, year, rating, review, and a 'Read more' link.
- * @param {Object} props
- * @param {string} props.poster - URL of the movie poster
- * @param {string} props.title - Movie title
- * @param {number|string} props.year - Release year
- * @param {number} props.rating - Rating out of 5
- * @param {string} props.review - Short review text
- * @param {string} props.readMoreLink - URL for the 'Read more' link
- */
-
 const PLACEHOLDER_POSTERS = [placeholder1, placeholder2, placeholder3];
-
 function getPoster(poster) {
   if (poster && poster !== "N/A") return poster;
-  // Pick a random placeholder for variety
   const idx = Math.floor(Math.random() * PLACEHOLDER_POSTERS.length);
   return PLACEHOLDER_POSTERS[idx];
 }
 
-const MovieCard = ({ poster, title, year, rating, review, readMoreLink }) => {
+const MovieCard = ({
+  poster,
+  title,
+  year,
+  rating,
+  review,
+  readMoreLink,
+  index,
+}) => {
+  const navigate = useNavigate();
   // Helper to render stars
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -42,44 +40,55 @@ const MovieCard = ({ poster, title, year, rating, review, readMoreLink }) => {
   };
 
   return (
-    <div className="max-w-xs bg-white rounded-lg shadow-md overflow-hidden flex flex-col transition-transform hover:scale-105 duration-200 m-2">
+    <motion.div
+      className="relative max-w-xs bg-white/30 dark:bg-gray-900/40 rounded-xl shadow-lg overflow-hidden flex flex-col m-2 cursor-pointer backdrop-blur-md border border-white/20 hover:shadow-2xl transition-transform"
+      whileHover={{
+        scale: 1.06,
+        boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+      }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08, duration: 0.5, type: "spring" }}
+      onClick={() => navigate(readMoreLink)}
+    >
+      <div className="absolute inset-0 bg-white/30 dark:bg-gray-900/40 backdrop-blur-md z-0" />
       <img
         src={getPoster(poster)}
         alt={title}
-        className="w-full h-60 object-cover object-center"
+        className="w-full h-60 object-cover object-center z-10"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = PLACEHOLDER_POSTERS[0];
         }}
       />
-      <div className="p-4 flex flex-col flex-1">
-        <h2 className="text-lg font-semibold mb-1 truncate">{title}</h2>
-        <div className="flex items-center text-sm text-gray-500 mb-2">
+      <div className="p-4 flex flex-col flex-1 z-10">
+        <h2 className="text-lg font-semibold mb-1 truncate text-white drop-shadow-lg">
+          {title}
+        </h2>
+        <div className="flex items-center text-sm text-gray-200 mb-2">
           <span>{year}</span>
           <span className="mx-2">•</span>
           <span>{renderStars(rating)}</span>
         </div>
-        <p className="text-gray-700 text-sm mb-4 line-clamp-3 flex-1">
+        <p className="text-gray-100 text-sm mb-4 line-clamp-3 flex-1 drop-shadow">
           {review}
         </p>
-        <a
-          href={readMoreLink}
-          className="text-blue-600 hover:underline text-sm font-medium mt-auto"
-        >
+        <span className="text-amber-300 hover:underline text-sm font-medium mt-auto">
           Read more
-        </a>
+        </span>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 MovieCard.propTypes = {
-  poster: PropTypes.string.isRequired,
+  poster: PropTypes.string,
   title: PropTypes.string.isRequired,
-  year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  rating: PropTypes.number.isRequired,
-  review: PropTypes.string.isRequired,
+  year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  rating: PropTypes.number,
+  review: PropTypes.string,
   readMoreLink: PropTypes.string.isRequired,
+  index: PropTypes.number,
 };
 
 export default MovieCard;
