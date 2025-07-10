@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReviewForm from "../Components/ReviewForm";
 
-const API_URL = "https://api.example.com/movies"; // Replace with your actual API endpoint
+const API_URL = "https://api.themoviedb.org/3"; // TMDB API base URL
 
 const AddReview = () => {
   const [success, setSuccess] = useState(false);
@@ -13,13 +13,19 @@ const AddReview = () => {
     setError(null);
     setSuccess(false);
     try {
-      // Example: POST to backend
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error("Failed to submit review");
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        // If no JSON, just continue
+        data = null;
+      }
       setSuccess(true);
     } catch (err) {
       setError(err.message);

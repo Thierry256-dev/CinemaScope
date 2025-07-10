@@ -5,7 +5,7 @@ import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
 
-const API_URL = "https://api.example.com/movies"; // Replace with your actual API endpoint
+const API_URL = "https://api.themoviedb.org/3"; // TMDB API base URL
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -18,9 +18,18 @@ const MovieDetails = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`${API_URL}/${id}`);
+        const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+        const res = await fetch(
+          `${API_URL}/movie/${id}?api_key=${TMDB_API_KEY}`
+        );
         if (!res.ok) throw new Error("Failed to fetch movie details");
-        const data = await res.json();
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          // If no JSON, just continue
+          data = null;
+        }
         setMovie(data);
       } catch (err) {
         setError(err.message);
@@ -49,7 +58,7 @@ const MovieDetails = () => {
     <div className="max-w-3xl mx-auto px-4 py-8 bg-white rounded-lg shadow-md mt-6">
       <div className="flex flex-col md:flex-row gap-6">
         <img
-          src={getPoster(movie.poster)}
+          src={getPoster(movie.poster_path)}
           alt={movie.title}
           className="w-full md:w-64 h-80 object-cover rounded-lg shadow"
           onError={(e) => {
@@ -62,12 +71,14 @@ const MovieDetails = () => {
             {movie.title}
           </h1>
           <div className="flex items-center text-gray-500 mb-2">
-            <span className="mr-2">{movie.year}</span>
-            <StarRating value={movie.rating} readOnly />
+            <span className="mr-2">{movie.release_date?.split("-")[0]}</span>
+            <StarRating value={movie.vote_average / 2} readOnly />
           </div>
           <div className="mt-4">
-            <h2 className="text-lg font-semibold mb-1">Review</h2>
-            <p className="text-gray-800 whitespace-pre-line">{movie.review}</p>
+            <h2 className="text-lg font-semibold mb-1">Overview</h2>
+            <p className="text-gray-800 whitespace-pre-line">
+              {movie.overview}
+            </p>
           </div>
         </div>
       </div>
