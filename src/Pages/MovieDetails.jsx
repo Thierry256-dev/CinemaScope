@@ -5,6 +5,7 @@ import StarRating from "../Components/StarRating";
 import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
+import { fetchMovieById } from "../services/api";
 
 const API_URL = "https://api.themoviedb.org/3"; // TMDB API base URL
 
@@ -32,18 +33,7 @@ const MovieDetails = () => {
       try {
         setLoading(true);
         setError(null);
-        const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-        const res = await fetch(
-          `${API_URL}/movie/${id}?api_key=${TMDB_API_KEY}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch movie details");
-        let data = null;
-        try {
-          data = await res.json();
-        } catch (jsonErr) {
-          // If no JSON, just continue
-          data = null;
-        }
+        const data = await fetchMovieById(id);
         setMovie(data);
       } catch (err) {
         setError(err.message);
@@ -115,6 +105,17 @@ const MovieDetails = () => {
           <div className="flex items-center text-gray-500 dark:text-gray-300 mb-2 font-poppins">
             <span className="mr-2">{movie.release_date?.split("-")[0]}</span>
             <StarRating value={movie.vote_average / 2} readOnly />
+          </div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {movie.genres &&
+              movie.genres.map((genre) => (
+                <span
+                  key={genre.id}
+                  className="px-3 py-1 rounded-full bg-accent-orange/20 text-accent-orange text-xs font-semibold font-poppins"
+                >
+                  {genre.name}
+                </span>
+              ))}
           </div>
           <div className="mt-4">
             <h2 className="text-lg md:text-xl font-semibold mb-1 font-outfit text-amber-400">

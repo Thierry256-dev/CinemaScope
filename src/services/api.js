@@ -16,8 +16,16 @@ export const searchMovies = async (title) => {
 
 // Fetch movie details by ID
 export const fetchMovieById = async (id) => {
-  const response = await api.get(`/movies/${id}`);
-  return response.data;
+  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+  try {
+    const response = await axios.get(`/movie/${id}`, {
+      params: { api_key: TMDB_API_KEY },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching movie by ID:", error);
+    return null;
+  }
 };
 
 // Optionally post a review

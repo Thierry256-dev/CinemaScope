@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
@@ -22,7 +22,6 @@ const MovieCard = ({
   readMoreLink,
   index,
 }) => {
-  const navigate = useNavigate();
   // Helper to render stars
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -49,7 +48,6 @@ const MovieCard = ({
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08, duration: 0.5, type: "spring" }}
-      onClick={() => navigate(readMoreLink)}
     >
       <div className="absolute inset-0 bg-white/30 dark:bg-gray-900/40 backdrop-blur-md z-0" />
       <img
@@ -73,9 +71,12 @@ const MovieCard = ({
         <p className="text-gray-100 text-sm mb-4 line-clamp-3 flex-1 drop-shadow">
           {review}
         </p>
-        <span className="text-amber-300 hover:underline text-sm font-medium mt-auto">
+        <Link
+          to={readMoreLink}
+          className="text-amber-300 hover:underline text-sm font-medium mt-auto rounded px-2 py-1 bg-black/30 dark:bg-white/10 backdrop-blur-sm transition-colors"
+        >
           Read more
-        </span>
+        </Link>
       </div>
     </motion.div>
   );
