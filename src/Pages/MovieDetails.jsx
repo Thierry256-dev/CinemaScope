@@ -7,8 +7,6 @@ import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
 import { fetchMovieById } from "../services/api";
 
-const API_URL = "https://api.themoviedb.org/3"; // TMDB API base URL
-
 const posterVariants = {
   hidden: { opacity: 0, x: -60 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.7, type: "spring" } },
@@ -22,6 +20,8 @@ const infoVariants = {
   },
 };
 
+const PLACEHOLDER_POSTERS = [placeholder1, placeholder2, placeholder3];
+
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
@@ -34,7 +34,12 @@ const MovieDetails = () => {
         setLoading(true);
         setError(null);
         const data = await fetchMovieById(id);
-        setMovie(data);
+        // TMDB returns an object with a 'success' property if not found
+        if (!data || data.success === false || data.status_code) {
+          setMovie(null);
+        } else {
+          setMovie(data);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -44,10 +49,10 @@ const MovieDetails = () => {
     fetchMovie();
   }, [id]);
 
-  const PLACEHOLDER_POSTERS = [placeholder1, placeholder2, placeholder3];
-
-  function getPoster(poster) {
-    if (poster && poster !== "N/A") return poster;
+  function getPoster(posterPath) {
+    if (posterPath) {
+      return `https://image.tmdb.org/t/p/w500${posterPath}`;
+    }
     // Pick a random placeholder for variety
     const idx = Math.floor(Math.random() * PLACEHOLDER_POSTERS.length);
     return PLACEHOLDER_POSTERS[idx];

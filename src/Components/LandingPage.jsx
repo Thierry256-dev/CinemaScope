@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import "../index.css";
 
 // You should place a video file in public/ or use a royalty-free video URL
-const VIDEO_SRC = "/background-cinema.mp4"; // This file exists in public/
+const VIDEO_SRC = "/background-cinema.jpg"; // This file exists in public/
 
 const heroVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -25,13 +25,13 @@ const LandingPage = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden font-cinzel">
       {/* Background Video */}
-      <video
+      <img
         className="absolute inset-0 w-full h-full object-cover z-0"
         src={VIDEO_SRC}
-        autoPlay
-        loop
-        muted
-        playsInline
+        //autoPlay
+        //loop
+        //muted
+        //playsInline
       />
       {/* Overlay */}
       <div className="absolute bg-black/80 inset-0 z-10" />

@@ -73,7 +73,7 @@ const MovieCard = ({
         </p>
         <Link
           to={readMoreLink}
-          className="text-amber-300 hover:underline text-sm font-medium mt-auto rounded px-2 py-1 bg-black/30 dark:bg-white/10 backdrop-blur-sm transition-colors"
+          className="inline-block mt-4 px-4 py-2 rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 font-outfit"
         >
           Read more
         </Link>

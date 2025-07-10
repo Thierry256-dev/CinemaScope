@@ -93,7 +93,7 @@ const Home = () => {
               year={movie.release_date ? movie.release_date.split("-")[0] : ""}
               rating={movie.vote_average}
               review={movie.overview}
-              readMoreLink={`/movies/${movie.id}`}
+              readMoreLink={`/movie/${movie.id}`}
               index={idx}
             />
           ))}
