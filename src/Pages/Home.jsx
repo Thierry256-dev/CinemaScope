@@ -2,18 +2,60 @@ import React, { useEffect, useState } from "react";
 import MovieCard from "../Components/MovieCard";
 import { fetchMovies, fetchPopularMovies } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaPlay } from "react-icons/fa";
 import GenreFilterBar from "../Components/GenreFilterBar";
 import axios from "axios";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
+  const [trailers, setTrailers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [activeGenre, setActiveGenre] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTrailer, setModalTrailer] = useState(null);
 
   const handleSearchChange = (e) => setSearch(e.target.value);
+
+  // Fetch trailers for visible movies
+  useEffect(() => {
+    const fetchAllTrailers = async () => {
+      if (!movies.length) return;
+      const newTrailers = {};
+      await Promise.all(
+        movies.map(async (movie) => {
+          try {
+            const res = await axios.get(
+              `https://api.themoviedb.org/3/movie/${movie.id}/videos`,
+              {
+                params: {
+                  api_key: import.meta.env.VITE_TMDB_API_KEY,
+                  language: "en-US",
+                },
+              }
+            );
+            const trailer = (res.data.results || []).find(
+              (vid) =>
+                vid.type === "Trailer" && vid.site === "YouTube" && vid.key
+            );
+            if (trailer) {
+              newTrailers[
+                movie.id
+              ] = `https://www.youtube.com/watch?v=${trailer.key}`;
+            }
+          } catch {
+            // ignore errors for missing trailers
+          }
+        })
+      );
+      setTrailers(newTrailers);
+    };
+    fetchAllTrailers();
+  }, [movies]);
 
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
@@ -83,6 +125,16 @@ const Home = () => {
     loadInitialMovies();
   }, []);
 
+  // Modal handlers
+  const openTrailerModal = (trailerUrl) => {
+    setModalTrailer(trailerUrl);
+    setModalOpen(true);
+  };
+  const closeTrailerModal = () => {
+    setModalOpen(false);
+    setModalTrailer(null);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-3xl md:text-5xl font-extrabold mb-6 text-gray-900 dark:text-white font-outfit tracking-tight text-center">
@@ -140,11 +192,41 @@ const Home = () => {
               rating={movie.vote_average}
               review={movie.overview}
               readMoreLink={`/movie/${movie.id}`}
+              trailerUrl={trailers[movie.id]}
+              onWatchTrailer={openTrailerModal}
               index={idx}
             />
           ))}
         </motion.div>
       </AnimatePresence>
+      {/* Trailer Modal */}
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={closeTrailerModal}
+        contentLabel="Trailer"
+        className="fixed inset-0 flex items-center justify-center z-50 bg-black/70"
+        overlayClassName="fixed inset-0 bg-black/70 z-40"
+      >
+        <div className="bg-black rounded-lg shadow-lg p-4 max-w-2xl w-full relative">
+          <button
+            onClick={closeTrailerModal}
+            className="absolute top-2 right-2 text-white text-2xl"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+          {modalTrailer && (
+            <div className="aspect-w-16 aspect-h-9">
+              <iframe
+                src={modalTrailer.replace("watch?v=", "embed/")}
+                title="Trailer"
+                allowFullScreen
+                className="w-full h-80 rounded-lg"
+              />
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };

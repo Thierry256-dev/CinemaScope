@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { FaPlay } from "react-icons/fa";
 import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
 import placeholder3 from "../assets/images/placeholder3.jpg";
@@ -20,6 +21,8 @@ const MovieCard = ({
   rating,
   review,
   readMoreLink,
+  trailerUrl,
+  onWatchTrailer,
   index,
 }) => {
   // Helper to render stars
@@ -72,12 +75,23 @@ const MovieCard = ({
         <p className="text-gray-100 text-sm mb-4 line-clamp-3 flex-1 drop-shadow">
           {review}
         </p>
-        <Link
-          to={readMoreLink}
-          className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 font-outfit"
-        >
-          Read more
-        </Link>
+        <div className="mt-auto flex flex-col gap-2">
+          <Link
+            to={readMoreLink}
+            className="w-full rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold py-2 px-4 shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200 text-center"
+          >
+            Read More
+          </Link>
+          {trailerUrl && (
+            <button
+              onClick={() => onWatchTrailer(trailerUrl)}
+              className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-accent-red via-accent-orange to-accent-gold text-white font-semibold py-2 px-4 shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200"
+            >
+              <FaPlay className="inline-block" />
+              Watch Trailer
+            </button>
+          )}
+        </div>
       </div>
     </motion.div>
   );
