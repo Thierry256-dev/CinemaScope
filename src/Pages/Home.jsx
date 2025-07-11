@@ -3,12 +3,15 @@ import MovieCard from "../Components/MovieCard";
 import { fetchMovies, fetchPopularMovies } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaSearch } from "react-icons/fa";
+import GenreFilterBar from "../Components/GenreFilterBar";
+import axios from "axios";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
+  const [activeGenre, setActiveGenre] = useState(null);
 
   const handleSearchChange = (e) => setSearch(e.target.value);
 
@@ -24,6 +27,37 @@ const Home = () => {
         results = await fetchMovies(search);
       }
       if (!results.length) throw new Error("No movies found");
+      setMovies(results);
+    } catch (err) {
+      setError(err.message);
+      setMovies([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenreSelect = async (genreId) => {
+    setActiveGenre(genreId);
+    setLoading(true);
+    setError(null);
+    try {
+      let results = [];
+      if (!genreId) {
+        results = await fetchPopularMovies();
+      } else {
+        const res = await axios.get(
+          "https://api.themoviedb.org/3/discover/movie",
+          {
+            params: {
+              api_key: import.meta.env.VITE_TMDB_API_KEY,
+              with_genres: genreId,
+              sort_by: "popularity.desc",
+            },
+          }
+        );
+        results = res.data.results || [];
+      }
+      if (!results.length) throw new Error("No movies found for this genre");
       setMovies(results);
     } catch (err) {
       setError(err.message);
@@ -72,6 +106,10 @@ const Home = () => {
           <FaSearch className="inline-block mr-2" />
         </button>
       </form>
+      <GenreFilterBar
+        onGenreSelect={handleGenreSelect}
+        activeGenre={activeGenre}
+      />
       {loading && (
         <p className="text-lg text-gray-600 dark:text-gray-300 font-poppins text-center">
           Loading movies...
@@ -81,7 +119,14 @@ const Home = () => {
         <p className="text-lg text-red-500 font-poppins text-center">{error}</p>
       )}
       <AnimatePresence mode="wait">
-        <div className="flex flex-col md:grid gap-8 items-center justify-center grid-cols-3 lg:grid-cols-4">
+        <motion.div
+          key={activeGenre || "all"}
+          className="flex flex-col md:grid gap-8 items-center justify-center grid-cols-3 lg:grid-cols-4"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          transition={{ duration: 0.5 }}
+        >
           {movies.map((movie, idx) => (
             <MovieCard
               key={movie.id}
@@ -98,7 +143,7 @@ const Home = () => {
               index={idx}
             />
           ))}
-        </div>
+        </motion.div>
       </AnimatePresence>
     </div>
   );
