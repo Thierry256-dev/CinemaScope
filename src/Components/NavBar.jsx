@@ -30,8 +30,8 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActive
-                      ? "bg-gray-800 text-yellow-400"
-                      : "hover:bg-gray-800 hover:text-yellow-400"
+                      ? "bg-gray-950 text-yellow-400"
+                      : "hover:bg-gray-900 hover:text-yellow-400"
                   }`
                 }
                 end={link.to === "/"}
@@ -44,7 +44,7 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full bg-gray-900 hover:bg-gray-700 transition-colors"
               aria-label="Toggle dark mode"
             >
               {darkMode ? (
@@ -79,8 +79,8 @@ const NavBar = ({ darkMode, toggleDarkMode }) => {
                   className={({ isActive }) =>
                     `block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
                       isActive
-                        ? "bg-gray-800 text-yellow-400"
-                        : "hover:bg-gray-800 hover:text-yellow-400"
+                        ? "dark:bg-gray-800/70 bg-gray-500 text-yellow-400"
+                        : "hover:bg-gray-900 hover:text-yellow-400"
                     }`
                   }
                   end={link.to === "/"}

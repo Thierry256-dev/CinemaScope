@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MovieCard from "../Components/MovieCard";
 import { fetchMovies, fetchPopularMovies } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaSearch } from "react-icons/fa";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -55,7 +56,7 @@ const Home = () => {
       </h1>
       <form
         onSubmit={handleSearchSubmit}
-        className="mb-8 flex flex-col sm:flex-row gap-3 items-center justify-center"
+        className="mb-8 flex flex-row gap-3 items-center justify-center"
       >
         <input
           type="text"
@@ -66,9 +67,9 @@ const Home = () => {
         />
         <button
           type="submit"
-          className="rounded-full px-6 py-2 md:px-8 md:py-3 font-semibold text-lg font-outfit bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-orange focus:ring-offset-2"
+          className="rounded-full font-semibold text-lg font-outfit bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-orange focus:ring-offset-2"
         >
-          Search
+          <FaSearch className="inline-block mr-2" />
         </button>
       </form>
       {loading && (
@@ -80,7 +81,7 @@ const Home = () => {
         <p className="text-lg text-red-500 font-poppins text-center">{error}</p>
       )}
       <AnimatePresence mode="wait">
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="flex flex-col md:grid gap-8 items-center justify-center grid-cols-3 lg:grid-cols-4">
           {movies.map((movie, idx) => (
             <MovieCard
               key={movie.id}

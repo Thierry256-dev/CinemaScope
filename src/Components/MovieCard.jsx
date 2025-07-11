@@ -40,7 +40,7 @@ const MovieCard = ({
 
   return (
     <motion.div
-      className="relative max-w-xs bg-white/30 dark:bg-gray-900/40 rounded-xl shadow-lg overflow-hidden flex flex-col m-2 cursor-pointer backdrop-blur-md border border-white/20 hover:shadow-2xl transition-transform"
+      className="relative w-full h-auto max-w-xs bg-white/30 dark:bg-gray-900/40 rounded-xl shadow-lg overflow-hidden flex flex-col m-2 cursor-pointer backdrop-blur-md border border-white/20 hover:shadow-2xl transition-transform"
       whileHover={{
         scale: 1.06,
         boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
@@ -49,17 +49,18 @@ const MovieCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08, duration: 0.5, type: "spring" }}
     >
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-11" />
       <div className="absolute inset-0 bg-white/30 dark:bg-gray-900/40 backdrop-blur-md z-0" />
       <img
         src={getPoster(poster)}
         alt={title}
-        className="w-full h-60 object-cover object-center z-10"
+        className="w-full object-cover object-center z-10"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = PLACEHOLDER_POSTERS[0];
         }}
       />
-      <div className="p-4 flex flex-col flex-1 z-10">
+      <div className="absolute bottom-0 p-4 flex flex-col flex-1 z-12">
         <h2 className="text-lg font-semibold mb-1 truncate text-white drop-shadow-lg">
           {title}
         </h2>
@@ -73,7 +74,7 @@ const MovieCard = ({
         </p>
         <Link
           to={readMoreLink}
-          className="inline-block mt-4 px-4 py-2 rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 font-outfit"
+          className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 font-outfit"
         >
           Read more
         </Link>

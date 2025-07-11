@@ -42,10 +42,10 @@ const ReviewForm = ({ onSubmit }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md space-y-4"
+      className="max-w-md mx-auto bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md space-y-4"
     >
       <div>
-        <label className="block text-gray-700 font-medium mb-1">
+        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">
           Movie Name<span className="text-red-500">*</span>
         </label>
         <input
@@ -53,8 +53,10 @@ const ReviewForm = ({ onSubmit }) => {
           name="name"
           value={form.name}
           onChange={handleChange}
-          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            errors.name ? "border-red-500" : "border-gray-300"
+          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-orange bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+            errors.name
+              ? "border-red-500"
+              : "border-gray-300 dark:border-gray-700"
           }`}
         />
         {errors.name && (
@@ -62,7 +64,7 @@ const ReviewForm = ({ onSubmit }) => {
         )}
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-1">
+        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">
           Year<span className="text-red-500">*</span>
         </label>
         <input
@@ -70,8 +72,10 @@ const ReviewForm = ({ onSubmit }) => {
           name="year"
           value={form.year}
           onChange={handleChange}
-          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            errors.year ? "border-red-500" : "border-gray-300"
+          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-orange bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+            errors.year
+              ? "border-red-500"
+              : "border-gray-300 dark:border-gray-700"
           }`}
           min="1888"
           max={new Date().getFullYear()}
@@ -81,7 +85,7 @@ const ReviewForm = ({ onSubmit }) => {
         )}
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-1">
+        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">
           Rating<span className="text-red-500">*</span>
         </label>
         <div className="flex items-center space-x-1">
@@ -95,7 +99,9 @@ const ReviewForm = ({ onSubmit }) => {
             >
               <svg
                 className={`w-7 h-7 ${
-                  form.rating >= star ? "text-yellow-400" : "text-gray-300"
+                  form.rating >= star
+                    ? "text-yellow-400"
+                    : "text-gray-300 dark:text-gray-700"
                 }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -110,7 +116,7 @@ const ReviewForm = ({ onSubmit }) => {
         )}
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-1">
+        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">
           Review<span className="text-red-500">*</span>
         </label>
         <textarea
@@ -118,8 +124,10 @@ const ReviewForm = ({ onSubmit }) => {
           value={form.review}
           onChange={handleChange}
           rows={4}
-          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            errors.review ? "border-red-500" : "border-gray-300"
+          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent-orange bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+            errors.review
+              ? "border-red-500"
+              : "border-gray-300 dark:border-gray-700"
           }`}
         />
         {errors.review && (
@@ -128,7 +136,7 @@ const ReviewForm = ({ onSubmit }) => {
       </div>
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-200"
+        className="w-full rounded-full bg-gradient-to-r from-accent-red via-accent-orange to-accent-gold text-white font-semibold py-2 px-4 shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200"
       >
         Submit Review
       </button>

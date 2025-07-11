@@ -4,13 +4,13 @@ import AppRoutes from "./routes/AppRoutes";
 import NavBar from "./Components/NavBar";
 import { MovieProvider } from "./context/MovieContext";
 import { AnimatePresence, motion } from "framer-motion";
-import "./index.css"; // Import the global CSS file for Tailwind and other styles
+import "./index.css";
 
 function Layout({ children, darkMode, toggleDarkMode }) {
   return (
     <div
       className={
-        darkMode ? "dark bg-gray-950 min-h-screen" : "bg-white min-h-screen"
+        darkMode ? "dark bg-gray-950 min-h-screen" : "bg-zinc-50 min-h-screen"
       }
     >
       <div className="transition-colors duration-500">
