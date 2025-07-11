@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import MovieCard from "../Components/MovieCard";
 import { fetchMovies, fetchPopularMovies } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSearch, FaPlay } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import GenreFilterBar from "../Components/GenreFilterBar";
 import axios from "axios";
 import Modal from "react-modal";
@@ -13,13 +13,16 @@ const Home = () => {
   const [movies, setMovies] = useState([]);
   const [trailers, setTrailers] = useState({});
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [activeGenre, setActiveGenre] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTrailer, setModalTrailer] = useState(null);
 
-  const handleSearchChange = (e) => setSearch(e.target.value);
+  const observer = useRef();
 
   // Fetch trailers for visible movies
   useEffect(() => {
@@ -28,6 +31,7 @@ const Home = () => {
       const newTrailers = {};
       await Promise.all(
         movies.map(async (movie) => {
+          if (trailers[movie.id]) return; // Don't refetch
           try {
             const res = await axios.get(
               `https://api.themoviedb.org/3/movie/${movie.id}/videos`,
@@ -52,78 +56,116 @@ const Home = () => {
           }
         })
       );
-      setTrailers(newTrailers);
+      setTrailers((prev) => ({ ...prev, ...newTrailers }));
     };
     fetchAllTrailers();
+    // eslint-disable-next-line
   }, [movies]);
 
-  const handleSearchSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      let results = [];
-      if (search.trim() === "") {
-        results = await fetchPopularMovies();
-      } else {
-        results = await fetchMovies(search);
-      }
-      if (!results.length) throw new Error("No movies found");
-      setMovies(results);
-    } catch (err) {
-      setError(err.message);
-      setMovies([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGenreSelect = async (genreId) => {
-    setActiveGenre(genreId);
-    setLoading(true);
-    setError(null);
-    try {
-      let results = [];
-      if (!genreId) {
-        results = await fetchPopularMovies();
-      } else {
-        const res = await axios.get(
-          "https://api.themoviedb.org/3/discover/movie",
-          {
-            params: {
-              api_key: import.meta.env.VITE_TMDB_API_KEY,
-              with_genres: genreId,
-              sort_by: "popularity.desc",
-            },
-          }
-        );
-        results = res.data.results || [];
-      }
-      if (!results.length) throw new Error("No movies found for this genre");
-      setMovies(results);
-    } catch (err) {
-      setError(err.message);
-      setMovies([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const loadInitialMovies = async () => {
-      setLoading(true);
+  // Fetch movies (with infinite scroll)
+  const fetchMoviesPage = useCallback(
+    async (pageToFetch = 1, genreId = activeGenre, searchTerm = search) => {
+      setLoadingMore(true);
       setError(null);
       try {
-        const results = await fetchPopularMovies();
-        setMovies(results);
+        let results = [];
+        let totalPages = 1;
+        if (searchTerm.trim() !== "") {
+          const res = await axios.get(
+            "https://api.themoviedb.org/3/search/movie",
+            {
+              params: {
+                api_key: import.meta.env.VITE_TMDB_API_KEY,
+                query: searchTerm,
+                page: pageToFetch,
+              },
+            }
+          );
+          results = res.data.results || [];
+          totalPages = res.data.total_pages;
+        } else if (genreId) {
+          const res = await axios.get(
+            "https://api.themoviedb.org/3/discover/movie",
+            {
+              params: {
+                api_key: import.meta.env.VITE_TMDB_API_KEY,
+                with_genres: genreId,
+                sort_by: "popularity.desc",
+                page: pageToFetch,
+              },
+            }
+          );
+          results = res.data.results || [];
+          totalPages = res.data.total_pages;
+        } else {
+          const res = await axios.get(
+            "https://api.themoviedb.org/3/discover/movie",
+            {
+              params: {
+                api_key: import.meta.env.VITE_TMDB_API_KEY,
+                sort_by: "popularity.desc",
+                page: pageToFetch,
+              },
+            }
+          );
+          results = res.data.results || [];
+          totalPages = res.data.total_pages;
+        }
+        setMovies((prev) =>
+          pageToFetch === 1 ? results : [...prev, ...results]
+        );
+        setHasMore(pageToFetch < totalPages);
       } catch (err) {
-        setError("Failed to load popular movies");
+        setError("Failed to load movies");
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
-    };
-    loadInitialMovies();
-  }, []);
+    },
+    [activeGenre, search]
+  );
+
+  // Initial load and when genre/search changes
+  useEffect(() => {
+    setLoading(true);
+    setPage(1);
+    fetchMoviesPage(1);
+    // eslint-disable-next-line
+  }, [activeGenre, search]);
+
+  // Infinite scroll observer
+  const lastMovieRef = useCallback(
+    (node) => {
+      if (loadingMore || loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new window.IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prev) => prev + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loadingMore, loading, hasMore]
+  );
+
+  // Fetch next page when page changes
+  useEffect(() => {
+    if (page === 1) return;
+    fetchMoviesPage(page);
+    // eslint-disable-next-line
+  }, [page]);
+
+  const handleSearchChange = (e) => setSearch(e.target.value);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setSearch(search.trim());
+  };
+
+  const handleGenreSelect = (genreId) => {
+    setActiveGenre(genreId);
+    setPage(1);
+  };
 
   // Modal handlers
   const openTrailerModal = (trailerUrl) => {
@@ -172,34 +214,50 @@ const Home = () => {
       )}
       <AnimatePresence mode="wait">
         <motion.div
-          key={activeGenre || "all"}
+          key={activeGenre || search || "all"}
           className="flex flex-col md:grid gap-8 items-center justify-center grid-cols-3 lg:grid-cols-4"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
           transition={{ duration: 0.5 }}
         >
-          {movies.map((movie, idx) => (
-            <MovieCard
-              key={movie.id}
-              poster={
-                movie.poster_path
-                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                  : undefined
-              }
-              title={movie.title}
-              year={movie.release_date ? movie.release_date.split("-")[0] : ""}
-              rating={movie.vote_average}
-              review={movie.overview}
-              readMoreLink={`/movie/${movie.id}`}
-              trailerUrl={trailers[movie.id]}
-              onWatchTrailer={openTrailerModal}
-              index={idx}
-            />
-          ))}
+          {movies.map((movie, idx) => {
+            const isLast = idx === movies.length - 1;
+            return (
+              <motion.div
+                key={movie.id}
+                ref={isLast ? lastMovieRef : null}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+              >
+                <MovieCard
+                  poster={
+                    movie.poster_path
+                      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                      : undefined
+                  }
+                  title={movie.title}
+                  year={
+                    movie.release_date ? movie.release_date.split("-")[0] : ""
+                  }
+                  rating={movie.vote_average}
+                  review={movie.overview}
+                  readMoreLink={`/movie/${movie.id}`}
+                  trailerUrl={trailers[movie.id]}
+                  onWatchTrailer={openTrailerModal}
+                  index={idx}
+                />
+              </motion.div>
+            );
+          })}
         </motion.div>
       </AnimatePresence>
-      {/* Trailer Modal */}
+      {loadingMore && (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-accent-orange"></div>
+        </div>
+      )}
       <Modal
         isOpen={modalOpen}
         onRequestClose={closeTrailerModal}
