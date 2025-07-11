@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import MovieCard from "../Components/MovieCard";
-import { fetchMovies, fetchPopularMovies } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaSearch } from "react-icons/fa";
 import GenreFilterBar from "../Components/GenreFilterBar";
+import SearchBar from "../Components/SearchBar";
 import axios from "axios";
 import Modal from "react-modal";
 
@@ -155,13 +154,6 @@ const Home = () => {
     // eslint-disable-next-line
   }, [page]);
 
-  const handleSearchChange = (e) => setSearch(e.target.value);
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setSearch(search.trim());
-  };
-
   const handleGenreSelect = (genreId) => {
     setActiveGenre(genreId);
     setPage(1);
@@ -182,24 +174,7 @@ const Home = () => {
       <h1 className="text-3xl md:text-5xl font-extrabold mb-6 text-gray-900 dark:text-white font-outfit tracking-tight text-center">
         Now Showing
       </h1>
-      <form
-        onSubmit={handleSearchSubmit}
-        className="mb-8 flex flex-row gap-3 items-center justify-center"
-      >
-        <input
-          type="text"
-          value={search}
-          onChange={handleSearchChange}
-          placeholder="Search for a movie..."
-          className="flex-1 w-full sm:w-auto border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-base md:text-lg font-poppins focus:outline-none focus:ring-2 focus:ring-accent-orange bg-white/80 dark:bg-gray-900/60 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-sm"
-        />
-        <button
-          type="submit"
-          className="rounded-full font-semibold text-lg font-outfit bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white shadow-lg hover:shadow-accent-orange/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-orange focus:ring-offset-2"
-        >
-          <FaSearch className="inline-block mr-2" />
-        </button>
-      </form>
+      <SearchBar />
       <GenreFilterBar
         onGenreSelect={handleGenreSelect}
         activeGenre={activeGenre}
