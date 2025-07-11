@@ -4,6 +4,7 @@ import { FaMoon, FaSun, FaBars, FaTimes } from "react-icons/fa";
 
 const navLinks = [
   { name: "Home", to: "/" },
+  { name: "Watchlist", to: "/watchlist" },
   { name: "About", to: "/about" },
   { name: "Add Review", to: "/add-review" },
 ];

@@ -246,6 +246,7 @@ const Home = () => {
                   readMoreLink={`/movie/${movie.id}`}
                   trailerUrl={trailers[movie.id]}
                   onWatchTrailer={openTrailerModal}
+                  movieObj={movie}
                   index={idx}
                 />
               </motion.div>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
 import NavBar from "./Components/NavBar";
 import { MovieProvider } from "./context/MovieContext";
+import { FavoritesProvider } from "./context/FavoritesContext"; // Import FavoritesProvider
 import { AnimatePresence, motion } from "framer-motion";
 import "./index.css";
 
@@ -61,13 +62,15 @@ function App() {
   const toggleDarkMode = () => setDarkMode((d) => !d);
 
   return (
-    <MovieProvider>
-      <Router>
-        <Layout darkMode={darkMode} toggleDarkMode={toggleDarkMode}>
-          <AnimatedRoutes />
-        </Layout>
-      </Router>
-    </MovieProvider>
+    <FavoritesProvider>
+      <MovieProvider>
+        <Router>
+          <Layout darkMode={darkMode} toggleDarkMode={toggleDarkMode}>
+            <AnimatedRoutes />
+          </Layout>
+        </Router>
+      </MovieProvider>
+    </FavoritesProvider>
   );
 }
 
