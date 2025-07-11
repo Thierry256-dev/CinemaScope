@@ -25,6 +25,10 @@ export const FavoritesProvider = ({ children }) => {
         ? prev.filter((m) => m.id !== movie.id)
         : [...prev, movie]
     );
+    // Optionally also add to watchlist:
+    setWatchlist((prev) =>
+      prev.some((m) => m.id === movie.id) ? prev : [...prev, movie]
+    );
   };
 
   const toggleWatchlist = (movie) => {
