@@ -20,7 +20,7 @@ const MovieCard = ({
   trailerUrl,
   onWatchTrailer,
   index,
-  movieObj, // pass the full movie object for favorites/watchlist
+  movieObj,
 }) => {
   const { favorites, watchlist, toggleFavorite, toggleWatchlist } =
     useFavorites();
@@ -33,7 +33,7 @@ const MovieCard = ({
       <img
         src={poster}
         alt={title}
-        className="w-full h-64 object-cover rounded-t-xl"
+        className="w-full object-cover rounded-t-xl"
         loading="lazy"
       />
       <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
@@ -54,30 +54,29 @@ const MovieCard = ({
           {isWatchlist ? <FaBookmark /> : <FaRegBookmark />}
         </motion.button>
       </div>
-      <div className="flex-1 flex flex-col p-4">
-        <h2 className="text-xl md:text-2xl font-outfit font-bold text-light-text dark:text-white mb-1">
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+      <div className="absolute bottom-0 flex-1 flex flex-col p-4">
+        <h2 className="text-xl md:text-2xl font-outfit font-bold text-white/85 mb-1">
           {title}
         </h2>
-        <div className="flex items-center text-light-textSecondary dark:text-gray-300 text-sm mb-2">
+        <div className="flex items-center text-gray-300 text-sm mb-2">
           <span className="mr-2">{year}</span>
           <span className="ml-auto font-semibold">
             {rating?.toFixed(1) ?? "N/A"}
           </span>
         </div>
-        <p className="text-light-textSecondary dark:text-gray-400 text-sm mb-4 line-clamp-3">
-          {review}
-        </p>
-        <div className="mt-auto flex flex-col gap-2">
+        <p className="text-gray-400 text-sm mb-4 line-clamp-3">{review}</p>
+        <div className="flex flex-col">
           <Link
             to={readMoreLink}
-            className="w-full rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold py-2 px-4 shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200 text-center"
+            className="w-full rounded-full bg-gradient-to-r from-accent-orange via-accent-amber to-accent-red text-white font-semibold shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200 text-center"
           >
             Read More
           </Link>
           {trailerUrl && (
             <button
               onClick={() => onWatchTrailer(trailerUrl)}
-              className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-accent-red via-accent-orange to-accent-gold text-white font-semibold py-2 px-4 shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200"
+              className="w-full flex items-center justify-center rounded-full bg-gradient-to-r from-accent-red via-accent-orange to-accent-gold text-white font-semibold py-2 px-4 shadow-card hover:shadow-lg hover:brightness-110 transition-colors duration-200"
             >
               <FaPlay className="inline-block" />
               Watch Trailer
