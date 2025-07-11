@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import axios from "axios";
 import StarRating from "../Components/StarRating";
 import placeholder1 from "../assets/images/placeholder1.jpg";
 import placeholder2 from "../assets/images/placeholder2.jpg";
@@ -132,7 +133,89 @@ const MovieDetails = () => {
           </div>
         </motion.div>
       </div>
+      <RelatedMovies movieId={id} />
     </motion.div>
+  );
+};
+
+const RelatedMovies = ({ movieId }) => {
+  const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRelated = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `https://api.themoviedb.org/3/movie/${movieId}/recommendations`,
+          {
+            params: {
+              api_key: import.meta.env.VITE_TMDB_API_KEY,
+              language: "en-US",
+              page: 1,
+            },
+          }
+        );
+        setRelated(res.data.results || []);
+      } catch {
+        setRelated([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (movieId) fetchRelated();
+  }, [movieId]);
+
+  if (loading) return null;
+  if (!related.length) return null;
+
+  return (
+    <div className="mt-12">
+      <h2 className="text-2xl font-bold font-outfit mb-4 text-gray-900 dark:text-white">
+        Related Movies
+      </h2>
+      <motion.div
+        className="flex gap-4 overflow-x-auto pb-2"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0, x: 40 },
+          visible: {
+            opacity: 1,
+            x: 0,
+            transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+          },
+        }}
+      >
+        {related.map((movie) => (
+          <motion.div
+            key={movie.id}
+            className="min-w-[180px] max-w-[180px] bg-light-card dark:bg-gray-900/80 rounded-lg shadow-card flex-shrink-0 cursor-pointer hover:scale-105 transition-transform duration-200"
+            whileHover={{ scale: 1.07 }}
+            onClick={() => navigate(`/movie/${movie.id}`)}
+          >
+            <img
+              src={
+                movie.poster_path
+                  ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+                  : "/placeholder.jpg"
+              }
+              alt={movie.title}
+              className="w-full h-56 object-cover rounded-t-lg"
+            />
+            <div className="p-3">
+              <h3 className="text-base font-semibold font-outfit text-gray-900 dark:text-white truncate">
+                {movie.title}
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-300">
+                {movie.release_date?.split("-")[0]}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 };
 
